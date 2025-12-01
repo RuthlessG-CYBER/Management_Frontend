@@ -19,7 +19,7 @@ import { Label } from "./ui/label";
 import { FilePenLine, Trash, BadgePlus } from 'lucide-react';
 import Orders from "./orders";
 
-const BASE_URL = `http://localhost:4040`
+const BASE_URL = `https://management-backend-oskq.onrender.com`
 
 
 interface Product {

@@ -18,7 +18,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 
-const BASE_URL = `http://localhost:4040`
+const BASE_URL = `https://management-backend-oskq.onrender.com`
 
 interface Order {
     _id: string;
