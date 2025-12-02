@@ -1,4 +1,4 @@
-import Home from './components/home';
+import Home from './components/main';
 import Login from './components/login';
 import Signup from './components/signup';
 import './index.css'

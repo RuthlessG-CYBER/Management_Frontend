@@ -8,6 +8,8 @@ import { useState } from "react"
 import { toast } from "sonner"
 
 const BASE_URL = `https://management-backend-oskq.onrender.com`
+// const BASE_URL = `http://localhost:4040`
+
 
 export function Signup() {
     const navigate = useNavigate();
