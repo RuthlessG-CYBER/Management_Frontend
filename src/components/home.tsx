@@ -16,8 +16,10 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
+
 // const BASE_URL = `http://localhost:4040`
 const BASE_URL = `https://management-backend-oskq.onrender.com`
+
 
 interface Product {
     _id: string;
@@ -28,6 +30,14 @@ interface Product {
     category: string;
     minimumStockAlert: number;
 }
+type RazorpayResponse = {
+  razorpay_payment_id: string;
+  status: string;
+  amount: number;
+};
+
+const RAZORPAY_KEY_ID = "rzp_test_Rj5p6Q7Ycz9Msw"
+
 
 export default function HomePage() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -50,22 +60,58 @@ export default function HomePage() {
 
     const handleOrder = async () => {
         if (!selectedProduct) return;
+        if (orderQuantity <= 0) {
+            toast.error("Please enter quantity");
+            return;
+        }
 
         try {
-            await axios.post(`${BASE_URL}/api/orders`, {
-                productId: selectedProduct._id,
-                quantity: Number(orderQuantity),
-                status: "pending"
+            const totalAmount = selectedProduct.price * orderQuantity;
+            const orderRes = await axios.post(`${BASE_URL}/api/order-payment`, {
+                amount: totalAmount,
             });
 
-            toast.success("Order successful!");
-            setOpen(false);
-            setOrderQuantity(0);
+            const order = orderRes.data;
+            const options = {
+                key: RAZORPAY_KEY_ID,
+                amount: order.amount,
+                currency: "INR",
+                name: "Product Purchase",
+                description: selectedProduct.name,
+                order_id: order.id,
+
+                handler: async function (response: RazorpayResponse) {
+                    toast.success("Payment Successful");
+                    await axios.post(`${BASE_URL}/api/orders`, {
+                        productId: selectedProduct._id,
+                        quantity: Number(orderQuantity),
+                        status: "pending",
+                        paymentId: response.razorpay_payment_id,
+                        paymentStatus: "paid",
+                    });
+
+                    setOpen(false);
+                    setOrderQuantity(0);
+                },
+
+                prefill: {
+                    name: "Soumya Panda",
+                    email: "soumyapanda@example.com",
+                    contact: "9999999999",
+                },
+
+                theme: {
+                    color: "#4f46e5",
+                },
+            };
+            const rzp1 = new window.Razorpay(options);
+            rzp1.open();
         } catch (error) {
-            console.error("Order Error:", error);
-            toast.error("Order failed. Please try again.");
+            console.error("Payment error:", error);
+            toast.error("Payment Failed");
         }
     };
+
 
     return (
         <>

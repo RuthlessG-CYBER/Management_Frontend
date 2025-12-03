@@ -32,6 +32,7 @@ interface Order {
     };
     quantity: number;
     status: string;
+    paymentStatus: string
 }
 
 function Orders() {
@@ -54,7 +55,7 @@ function Orders() {
 
         const interval = setInterval(() => {
             getOrders();
-        }, 1000); 
+        }, 5000); 
         return () => clearInterval(interval);
 
     }, [])
@@ -115,8 +116,9 @@ function Orders() {
                             <CardDescription>Status: {order.status}</CardDescription>
                             <CardDescription>Stocks: {order.productId.stock}</CardDescription>
                         </CardContent>
-                        <CardFooter>
+                        <CardFooter className="flex-row gap-2">
                             <CardDescription>Order ID: {order._id}</CardDescription>
+                            <CardDescription>Payment Status: {order.paymentStatus}</CardDescription>
                         </CardFooter>
                     </Card>
                 ))}
@@ -150,7 +152,7 @@ function Orders() {
 
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>Status</SelectLabel>
+                                    <SelectLabel>Order Status</SelectLabel>
                                     <SelectItem value="pending">Pending</SelectItem>
                                     <SelectItem value="processing">Processing</SelectItem>
                                     <SelectItem value="shipped">Shipped</SelectItem>
